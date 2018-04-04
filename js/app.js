@@ -13,7 +13,7 @@ const cardAr = [
   'paper-plane-o'
 ];
 
-const cardAr2 = cardAr.concat(cardAr); // double the values
+const cardAr2 = cardAr.concat(cardAr); // Double the values
 
 /*
  * Display the cards on the page
@@ -37,8 +37,28 @@ function shuffle(array) {
     return array;
 }
 
-shuffle(cardAr2); // shuffle the list of cards
-console.log(cardAr2); // test only
+shuffle(cardAr2); // Shuffle the list of cards
+
+// Create random deck
+function createCards() {
+    const fragment = document.createDocumentFragment();
+    const totalCards = cardAr2.length;
+
+    for (let i = 0; i < totalCards; i++) {
+        const newElement = document.createElement('li');
+        const innerEl = document.createElement('i');
+        newElement.classList = 'card';
+        innerEl.classList = 'fa fa-' + cardAr2[i];
+
+        newElement.appendChild(innerEl);
+
+        fragment.appendChild(newElement);
+    }
+
+    document.querySelector('.deck').appendChild(fragment);
+}
+
+createCards();
 
 /*
  * set up the event listener for a card. If a card is clicked:
