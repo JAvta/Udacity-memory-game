@@ -13,6 +13,8 @@ const cardAr = [
   'paper-plane-o'
 ];
 
+const cardAr2 = cardAr.concat(cardAr); // double the values
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -35,6 +37,8 @@ function shuffle(array) {
     return array;
 }
 
+shuffle(cardAr2); // shuffle the list of cards
+console.log(cardAr2); // test only
 
 /*
  * set up the event listener for a card. If a card is clicked:
