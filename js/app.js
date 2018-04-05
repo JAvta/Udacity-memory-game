@@ -24,38 +24,38 @@ const cardAr2 = cardAr.concat(cardAr); // Double the values
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
 
-    return array;
+  return array;
 }
 
-shuffle(cardAr2); // Shuffle the list of cards
+shuffle(cardAr2); // * Shuffle the list of cards
 
-// Create random deck
+// * Loop through each card and create its HTML
 function createCards() {
-    const fragment = document.createDocumentFragment();
-    const totalCards = cardAr2.length;
+  const fragmentCa = document.createDocumentFragment();
+  const totalCards = cardAr2.length;
 
-    for (let i = 0; i < totalCards; i++) {
-        const newElement = document.createElement('li');
-        const innerEl = document.createElement('i');
-        newElement.classList = 'card';
-        innerEl.classList = 'fa fa-' + cardAr2[i];
+  for (let i = 0; i < totalCards; i++) {
+    const newElement = document.createElement('li');
+    const innerEleme = document.createElement('i');
 
-        newElement.appendChild(innerEl);
+    newElement.classList = 'card';
+    innerEleme.classList = 'fa fa-' + cardAr2[i];
 
-        fragment.appendChild(newElement);
-    }
+    newElement.appendChild(innerEleme);
+    fragmentCa.appendChild(newElement);
+  }
 
-    document.querySelector('.deck').appendChild(fragment);
+  document.querySelector('.deck').appendChild(fragmentCa); // * Add each card's HTML to the page
 }
 
 createCards();
