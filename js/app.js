@@ -39,26 +39,48 @@ function shuffle(array) {
 
 shuffle(cardAr2); // * Shuffle the list of cards
 
-// * Loop through each card and create its HTML
-function createCards() {
-  const fragmentCa = document.createDocumentFragment();
-  const totalCards = cardAr2.length;
+const deckContainer = document.createElement('ul');
+deckContainer.classList = 'deck';
+document.querySelector('.container').appendChild(deckContainer);
 
-  for (let i = 0; i < totalCards; i++) {
-    const newElement = document.createElement('li');
-    const innerEleme = document.createElement('i');
+let showAr = [];
 
-    newElement.classList = 'card';
-    innerEleme.classList = 'fa fa-' + cardAr2[i];
+function clickRespond(evt) {
+  if (evt.target.nodeName === 'LI' && showAr.length < 2) {
+    const e1 = evt.target;
+    showAr.push(e1.querySelector('i').classList);
 
-    newElement.appendChild(innerEleme);
-    fragmentCa.appendChild(newElement);
+    e1.classList.toggle('show');
+
+    if (showAr.length === 2) {
+      const e2 = evt.target;
+      showAr.push(e2.querySelector('i').classList);
+
+      e2.classList.toggle('show');
+
+      let v1 = showAr[0].toString();
+      let v2 = showAr[1].toString();
+      evt.target.classList.add('match');
+    }
   }
-
-  document.querySelector('.deck').appendChild(fragmentCa); // * Add each card's HTML to the page
 }
 
-createCards();
+const fragment = document.createDocumentFragment();
+const totalCards = cardAr2.length;
+
+for (let i = 0; i < totalCards; i++) { // * Loop through each card and create its HTML
+  const newEl = document.createElement('li');
+  const innerEl = document.createElement('i');
+
+  newEl.classList = 'card show';
+  innerEl.classList = 'fa fa-' + cardAr2[i];
+
+  newEl.appendChild(innerEl);
+  fragment.appendChild(newEl);
+}
+
+document.querySelector('.deck').appendChild(fragment); // * Add each card's HTML to the page
+document.querySelector('.deck').addEventListener('click', clickRespond);
 
 /*
  * set up the event listener for a card. If a card is clicked:
