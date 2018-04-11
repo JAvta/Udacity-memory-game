@@ -39,48 +39,76 @@ function shuffle(array) {
 
 shuffle(cardAr2); // * Shuffle the list of cards
 
-const deckContainer = document.createElement('ul');
-deckContainer.classList = 'deck';
-document.querySelector('.container').appendChild(deckContainer);
+
 
 let showAr = [];
-
 function clickRespond(evt) {
-  if (evt.target.nodeName === 'LI' && showAr.length < 2) {
-    const e1 = evt.target;
-    showAr.push(e1.querySelector('i').classList);
+  const e = evt.target;
+  const sh = document.getElementsByClassName("show");
 
-    e1.classList.toggle('show');
+  if (e.nodeName === 'LI' && e.classList.contains('show') !== true && e.classList.contains('match') !== true) {
+    if (showAr.length < 1) {
+      showAr.push(e.querySelector('i').classList);
+      e.classList.add('show');
 
-    if (showAr.length === 2) {
-      const e2 = evt.target;
-      showAr.push(e2.querySelector('i').classList);
+    } else if (showAr.length < 2) {
+      showAr.push(e.querySelector('i').classList);
+      e.classList.add('show');
 
-      e2.classList.toggle('show');
+      let c1 = showAr[0].toString();
+      let c2 = showAr[1].toString();
 
-      let v1 = showAr[0].toString();
-      let v2 = showAr[1].toString();
-      evt.target.classList.add('match');
+      if (c1 === c2) {
+        sh[1].classList.add('match');
+        sh[1].classList.remove('show');
+
+        sh[0].classList.add('match');
+        sh[0].classList.remove('show');
+        showAr = [];
+
+      } else {
+        setTimeout(function () {
+          sh[1].classList.remove('show');
+          sh[0].classList.remove('show');
+          showAr = [];
+        }, 500);
+      }
     }
   }
+
 }
+function createDeck() {
+  const deckContainer = document.createElement('ul');
+  deckContainer.classList = 'deck';
+  document.querySelector('.container').appendChild(deckContainer);
 
-const fragment = document.createDocumentFragment();
-const totalCards = cardAr2.length;
+  const remove = document.querySelector('.deck')
+  const fragment = document.createDocumentFragment();
+  const totalCards = cardAr2.length;
 
-for (let i = 0; i < totalCards; i++) { // * Loop through each card and create its HTML
-  const newEl = document.createElement('li');
-  const innerEl = document.createElement('i');
+  for (let i = 0; i < totalCards; i++) { // * Loop through each card and create its HTML
+    const newEl = document.createElement('li');
+    const innerEl = document.createElement('i');
 
-  newEl.classList = 'card show';
-  innerEl.classList = 'fa fa-' + cardAr2[i];
+    newEl.classList = 'card';
+    innerEl.classList = 'fa fa-' + cardAr2[i];
 
-  newEl.appendChild(innerEl);
-  fragment.appendChild(newEl);
+    newEl.appendChild(innerEl);
+    fragment.appendChild(newEl);
+  }
+
+  document.querySelector('.deck').appendChild(fragment); // * Add each card's HTML to the page
+  document.querySelector('.deck').addEventListener('click', clickRespond);
+  document.querySelector('.restart').addEventListener('click', restartDeck);
 }
+createDeck();
 
-document.querySelector('.deck').appendChild(fragment); // * Add each card's HTML to the page
-document.querySelector('.deck').addEventListener('click', clickRespond);
+function restartDeck() {
+  const d = document.querySelector('.deck');
+  d.parentNode.removeChild(d);
+  shuffle(cardAr2);
+  createDeck();
+}
 
 /*
  * set up the event listener for a card. If a card is clicked:
