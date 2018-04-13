@@ -2,7 +2,7 @@
  * Create a list that holds all of your cards
  */
 
-const cardAr = [
+const cardAr = [ // Cards listed in array
   'anchor',
   'bicycle',
   'bolt',
@@ -13,7 +13,7 @@ const cardAr = [
   'paper-plane-o'
 ];
 
-const cardAr2 = cardAr.concat(cardAr); // Double the values
+const cardAr2 = cardAr.concat(cardAr); // Double the cards
 
 /*
  * Display the cards on the page
@@ -24,7 +24,7 @@ const cardAr2 = cardAr.concat(cardAr); // Double the values
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+  let currentIndex = array.length, temporaryValue, randomIndex;
 
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
@@ -37,52 +37,63 @@ function shuffle(array) {
   return array;
 }
 
-shuffle(cardAr2); // * Shuffle the list of cards
+shuffle(cardAr2); // * Shuffle all the cards for initial deck
 
+let mCount = 0; // Create variable for moves count
+let sCount = 3; // Create variable for stars count
+let showAr = []; // Create an empty array for holding showed cards
+const clShow = document.getElementsByClassName("show"); // Create shortcut for selecting showed cards
 
-
-let showAr = [];
 function clickRespond(evt) {
   const e = evt.target;
-  const sh = document.getElementsByClassName("show");
 
-  if (e.nodeName === 'LI' && e.classList.contains('show') !== true && e.classList.contains('match') !== true) {
-    if (showAr.length < 1) {
-      showAr.push(e.querySelector('i').classList);
-      e.classList.add('show');
+  function showCard() {
+    showAr.push(e.querySelector('i').classList);
+    e.classList.add('show');
+  }
 
-    } else if (showAr.length < 2) {
-      showAr.push(e.querySelector('i').classList);
-      e.classList.add('show');
+  function matchCheck() {
+    const c1 = showAr[0].toString();
+    const c2 = showAr[1].toString();
 
-      let c1 = showAr[0].toString();
-      let c2 = showAr[1].toString();
+    if (c1 === c2) {
+      clShow[1].classList.add('match');
+      clShow[1].classList.remove('show');
 
-      if (c1 === c2) {
-        sh[1].classList.add('match');
-        sh[1].classList.remove('show');
+      clShow[0].classList.add('match');
+      clShow[0].classList.remove('show');
 
-        sh[0].classList.add('match');
-        sh[0].classList.remove('show');
+      showAr = [];
+
+    } else {
+      setTimeout(function () {
+        clShow[1].classList.remove('show');
+        clShow[0].classList.remove('show');
         showAr = [];
-
-      } else {
-        setTimeout(function () {
-          sh[1].classList.remove('show');
-          sh[0].classList.remove('show');
-          showAr = [];
-        }, 500);
-      }
+      }, 500);
     }
   }
 
-}
-function createDeck() {
-  const deckContainer = document.createElement('ul');
-  deckContainer.classList = 'deck';
-  document.querySelector('.container').appendChild(deckContainer);
+  if (e.nodeName === 'LI' && e.classList.contains('show') !== true && e.classList.contains('match') !== true) {
+    if (showAr.length < 1) {
+      showCard();
 
-  const remove = document.querySelector('.deck')
+    } else if (showAr.length < 2) {
+      showCard();
+      matchCheck();
+
+      mCount++;
+      document.querySelector('.moves').textContent = mCount;
+    }
+  }
+}
+
+function createDeck() {
+  const deckCo = document.createElement('ul');
+  deckCo.classList = 'deck';
+  document.querySelector('.container').appendChild(deckCo);
+
+  const clDeck = document.querySelector('.deck');
   const fragment = document.createDocumentFragment();
   const totalCards = cardAr2.length;
 
@@ -97,18 +108,39 @@ function createDeck() {
     fragment.appendChild(newEl);
   }
 
-  document.querySelector('.deck').appendChild(fragment); // * Add each card's HTML to the page
-  document.querySelector('.deck').addEventListener('click', clickRespond);
-  document.querySelector('.restart').addEventListener('click', restartDeck);
+  clDeck.appendChild(fragment); // * Add each card's HTML to the page
+  clDeck.addEventListener('click', clickRespond);
 }
-createDeck();
+createDeck(); // Create initial deck
 
-function restartDeck() {
-  const d = document.querySelector('.deck');
-  d.parentNode.removeChild(d);
+function resetStars() {
+  const clStars = document.querySelector('.stars');
+  clStars.parentNode.removeChild(clStars);
+
+  document.querySelector('.score-panel').insertAdjacentHTML('afterbegin', '<ul class="stars"></ul>');
+
+  for (let s = 0; s < 3; s++) {
+    document.querySelector('.stars').insertAdjacentHTML('afterbegin', '<li><i class="fa fa-star"> </i></li>');
+
+  }
+}
+
+function gameRestart() {
+  const clDeck = document.querySelector('.deck');
+  clDeck.parentNode.removeChild(clDeck);
+
+  showAr = [];
+  mCount = 0;
+  sCount = 3;
+  document.querySelector('.moves').textContent = mCount;
+
   shuffle(cardAr2);
   createDeck();
+  resetStars();
 }
+document.querySelector('.restart').addEventListener('click', gameRestart);
+
+
 
 /*
  * set up the event listener for a card. If a card is clicked:
