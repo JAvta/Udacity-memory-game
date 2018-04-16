@@ -136,8 +136,10 @@ function clickRespond(evt) {
     } else if (tCount < 3600) { // Display minutes and seconds if less than 1 hour
       const s = tCount % 60; // Reminder should be seconds
       const m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
+      const ss = s !== 1 ? 's' : ''; // Plural second
+      const ms = m !== 1 ? 's' : ''; // Plural minute
 
-      tCount = `${m} minutes and ${s} seconds`;
+      tCount = `${m} minute${ms} and ${s} second${ss}`;
 
     } else { // Display 'ages!' if more than 1 hour
       tCount = 'ages!'
