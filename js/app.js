@@ -50,6 +50,7 @@ const cardAr2x = cardAr.concat(cardAr); // * Create a list that holds all of you
 const totalCards = cardAr2x.length;
 
 let openAr; // Hold opened cards
+let timer; // Timer function
 
 let tCount; // Time
 let sCount; // Stars
@@ -59,6 +60,7 @@ let deckCl; // Select "deck" class
 let starsCl; // Select "stars" class
 
 const movesCl = document.querySelector('.moves'); // Select "moves" class
+const timeCl = document.querySelector('.time'); // Select "time" class
 
 function clickRespond(evt) {
   const e = evt.target;
@@ -120,12 +122,9 @@ function clickRespond(evt) {
 
   function gameCheck() {
     if (document.getElementsByClassName("match").length === totalCards) {
+      stopTimer();
       resetDeck();
       gameWon();
-    }
-
-    if (tCount === 0) { // Start counting seconds after first two cards opened
-      tCount = setInterval(function () {tCount++;}, 1000);
     }
   }
 
@@ -150,7 +149,7 @@ function clickRespond(evt) {
       <i class="fa fa-check-circle-o"></i>
       <h1>Congratulations! You Won!</h1>
       <p>Game duration: ${tCount}</p>
-      <span class="card match again"> Play again!</span>
+      <span class="card match again"> Play again?</span>
     </div>`;
 
     deckCl.classList.add('won');
@@ -165,6 +164,13 @@ function clickRespond(evt) {
 
     } else if (openAr.length < 2) {
       showCard();
+
+      if (tCount === 0) { // Start counting seconds after first two cards opened
+        timer = setInterval(function () {
+          tCount++;
+          timeCl.textContent = tCount;
+        }, 1000);
+      }
       matchCheck();
     }
   }
@@ -210,12 +216,19 @@ function appendCards() { // ** Display the cards on the page
   deckCl.addEventListener('click', clickRespond); // *** Set up the event listener for a card
 }
 
+function stopTimer() {
+  clearInterval(timer);
+}
+
 function newGame() {
+  stopTimer();
+
   openAr = [];
   tCount = 0;
   sCount = 3;
   mCount = 0;
   movesCl.textContent = mCount;
+  timeCl.textContent = tCount;
 
   resetStars();
   resetDeck();
