@@ -1,3 +1,18 @@
+// Shuffle function from http://stackoverflow.com/a/2450976
+function shuffle(array) {
+  let currentIndex = array.length, temporaryValue, randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 /*
  * Create a list that holds all of your cards
  */
@@ -34,28 +49,16 @@ const cardAr = [
 const cardAr2x = cardAr.concat(cardAr); // * Create a list that holds all of your cards
 const totalCards = cardAr2x.length;
 
-// Shuffle function from http://stackoverflow.com/a/2450976
-function shuffle(array) {
-  let currentIndex = array.length, temporaryValue, randomIndex;
+let openAr; // Hold opened cards
 
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
+let tCount; // Time
+let sCount; // Stars
+let mCount; // Moves
 
-  return array;
-}
+let deckCl; // Select "deck" class
+let starsCl; // Select "stars" class
 
-shuffle(cardAr2x); // ** - shuffle the list of cards using the provided "shuffle" method
-
-let openAr; // Create variable for holding opened cards
-let sCount; // Create variable for stars count
-let tCount; // Create variable for time count
-let mCount; // Create variable for moves count
-const movesCl = document.querySelector('.moves'); // Create shortcut for selecting .moves
+const movesCl = document.querySelector('.moves'); // Select "moves" class
 
 function clickRespond(evt) {
   const e = evt.target;
@@ -70,30 +73,23 @@ function clickRespond(evt) {
     const c1 = openAr[0].toString();
     const c2 = openAr[1].toString();
 
-    // if (gameTime === undefined) { // Set the time game started if it is not set already
-    //   gameTime = new Date().getTime();
-    // }
-    // console.log(gameTime);
-    if (tCount === 0) {
-      tCount = setInterval(function () {tCount++;}, 1000);
-    }
 
     if (c1 === c2) { // *** + if the cards do match, remove the cards from the list and lock the cards in the open position
-      for (let i = 1; i >= 0; i--) {
-        openAr = [];
+      openAr = [];
 
+      for (let i = 1; i >= 0; i--) {
         showCl[i].classList.add('match');
         showCl[i].classList.remove('show');
       }
 
     } else { // *** + if the cards do not match, remove the cards from the list and hide the card's symbol
-      setTimeout(function () { // Add 500ms delay before hiding cards
-        for (let i = 1; i >= 0; i--) {
-          openAr = [];
+      openAr = [];
 
+      setTimeout(function () { // Add a slight delay before hiding cards allowing to see and memorise both of them
+        for (let i = 1; i >= 0; i--) {
           showCl[i].classList.remove('show');
         }
-      }, 500);
+      }, 300);
     }
     movesCount();
   }
@@ -124,25 +120,26 @@ function clickRespond(evt) {
 
   function gameCheck() {
     if (document.getElementsByClassName("match").length === totalCards) {
-      createDeck();
+      resetDeck();
       gameWon();
+    }
+
+    if (tCount === 0) { // Start counting seconds after first two cards opened
+      tCount = setInterval(function () {tCount++;}, 1000);
     }
   }
 
   function gameWon() {
-    const deckCl = document.querySelector('.deck');
-    console.log(tCount);
-
-    if (tCount < 60) {
+    if (tCount < 60) { // Display seconds if less than 1 minute
       tCount = `${tCount} seconds`;
 
-    } else if (tCount < 3600) {
-      const s = tCount % 60;
-      const m = (tCount - s) / 60;
+    } else if (tCount < 3600) { // Display minutes and seconds if less than 1 hour
+      const s = tCount % 60; // Reminder should be seconds
+      const m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
 
       tCount = `${m} minutes and ${s} seconds`;
 
-    } else {
+    } else { // Display 'ages!' if more than 1 hour
       tCount = 'ages!'
     };
 
@@ -171,20 +168,29 @@ function clickRespond(evt) {
   }
 }
 
-function createDeck() { // Create deck container
-  const deckCl = document.querySelector('.deck');
-  const deckCo = document.createElement('ul');
+function resetStars() {
+  if (starsCl != null) { // Remove stars if there are any
+    starsCl.parentNode.removeChild(starsCl);
+  }
 
-  if (typeof(deckCl) != 'undefined' && deckCl != null) { // Remove deck if there is one already
+  document.querySelector('.score-panel').insertAdjacentHTML('afterbegin', '<ul class="stars"></ul>');
+  starsCl = document.querySelector('.stars');
+
+  for (let i = 0; i < sCount; i++) {
+    starsCl.insertAdjacentHTML('afterbegin', '<li><i class="fa fa-star"></i></li>');
+  }
+}
+
+function resetDeck() { // Create deck container
+  if (deckCl != null) { // Remove deck if there is one already
     deckCl.parentNode.removeChild(deckCl);
   }
 
-  deckCo.classList = 'deck';
-  document.querySelector('.container').appendChild(deckCo);
+  document.querySelector('.container').insertAdjacentHTML('beforeend', '<ul class="deck"></ul>');
+  deckCl = document.querySelector('.deck');
 }
 
 function appendCards() { // ** Display the cards on the page
-  const deckCl = document.querySelector('.deck');
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < totalCards; i++) { // ** - loop through each card and create its HTML
@@ -202,30 +208,19 @@ function appendCards() { // ** Display the cards on the page
   deckCl.addEventListener('click', clickRespond); // *** Set up the event listener for a card
 }
 
-function resetStars() {
-  const starsCl = document.querySelector('.stars');
-  starsCl.parentNode.removeChild(starsCl);
-
-  document.querySelector('.score-panel').insertAdjacentHTML('afterbegin', '<ul class="stars"></ul>');
-
-  for (let s = 0; s < 3; s++) {
-    document.querySelector('.stars').insertAdjacentHTML('afterbegin', '<li><i class="fa fa-star"></i></li>');
-  }
-}
-
 function newGame() {
   openAr = [];
-  sCount = 3;
   tCount = 0;
+  sCount = 3;
   mCount = 0;
   movesCl.textContent = mCount;
 
   resetStars();
-  createDeck();
+  resetDeck();
 
-  shuffle(cardAr2x);
+  shuffle(cardAr2x); // ** - shuffle the list of cards using the provided "shuffle" method
   appendCards();
 }
 document.querySelector('.restart').addEventListener('click', newGame);
 
-newGame(); // Create initial deck
+newGame();
