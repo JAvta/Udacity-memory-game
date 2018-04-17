@@ -50,15 +50,18 @@ const cardAr2x = cardAr.concat(cardAr); // * Create a list that holds all of you
 const totalCards = cardAr2x.length;
 
 let openAr; // Hold opened cards
-let timer; // Timer function
 
-let tCount; // Time
 let sCount; // Stars
 let mCount; // Moves
+let tCount; // Time
+
+let s; // Seconds
+let m; // Minutes
+
+let time; // Time function
 
 let deckCl; // Select "deck" class
 let starsCl; // Select "stars" class
-
 const movesCl = document.querySelector('.moves'); // Select "moves" class
 const timeCl = document.querySelector('.time'); // Select "time" class
 
@@ -75,24 +78,22 @@ function clickRespond(evt) {
     const c1 = openAr[0].toString();
     const c2 = openAr[1].toString();
 
-
     if (c1 === c2) { // *** + if the cards do match, remove the cards from the list and lock the cards in the open position
-      openAr = [];
-
       for (let i = 1; i >= 0; i--) {
         showCl[i].classList.add('match');
         showCl[i].classList.remove('show');
       }
-
-    } else { // *** + if the cards do not match, remove the cards from the list and hide the card's symbol
       openAr = [];
 
+    } else { // *** + if the cards do not match, remove the cards from the list and hide the card's symbol
       setTimeout(function () { // Add a slight delay before hiding cards allowing to see and memorise both of them
         for (let i = 1; i >= 0; i--) {
           showCl[i].classList.remove('show');
         }
+        openAr = [];
       }, 300);
     }
+
     movesCount();
   }
 
@@ -117,12 +118,13 @@ function clickRespond(evt) {
     } else if (sCount === 2 && mCount > 16) {
       removeOne();
     }
+
     gameCheck();
   }
 
   function gameCheck() {
     if (document.getElementsByClassName("match").length === totalCards) {
-      stopTimer();
+      timeStop();
       resetDeck();
       gameWon();
     }
@@ -133,8 +135,6 @@ function clickRespond(evt) {
       tCount = `${tCount} seconds`;
 
     } else if (tCount < 3600) { // Display minutes and seconds if less than 1 hour
-      const s = tCount % 60; // Reminder should be seconds
-      const m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
       const ss = s !== 1 ? 's' : ''; // Plural second
       const ms = m !== 1 ? 's' : ''; // Plural minute
 
@@ -142,7 +142,7 @@ function clickRespond(evt) {
 
     } else { // Display 'ages!' if more than 1 hour
       tCount = 'ages!'
-    };
+    }
 
     const congrats =
     `<div class="won">
@@ -164,13 +164,6 @@ function clickRespond(evt) {
 
     } else if (openAr.length < 2) {
       showCard();
-
-      if (tCount === 0) { // Start counting seconds after first two cards opened
-        timer = setInterval(function () {
-          tCount++;
-          timeCl.textContent = tCount;
-        }, 1000);
-      }
       matchCheck();
     }
   }
@@ -216,26 +209,47 @@ function appendCards() { // ** Display the cards on the page
   deckCl.addEventListener('click', clickRespond); // *** Set up the event listener for a card
 }
 
-function stopTimer() {
-  clearInterval(timer);
+function timeStop() {
+  clearInterval(time);
+}
+
+function timeStart() {
+  if (tCount === 0) { // Start counting seconds after first two cards opened
+    time = setInterval(function () {
+
+      if (tCount > 60) {
+        s = tCount % 60; // Reminder should be seconds
+        m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
+        timeCl.textContent = `${m}:${s}`;
+      } else {
+        timeCl.textContent = `00:${tCount}`;
+      }
+
+      tCount++;
+    }, 1000);
+  }
 }
 
 function newGame() {
-  stopTimer();
+  timeStop();
 
   openAr = [];
-  tCount = 0;
+
   sCount = 3;
   mCount = 0;
+  tCount = 0;
+
   movesCl.textContent = mCount;
-  timeCl.textContent = tCount;
+  timeCl.textContent = '00:00';
 
   resetStars();
   resetDeck();
 
   shuffle(cardAr2x); // ** - shuffle the list of cards using the provided "shuffle" method
   appendCards();
+
+  timeStart();
 }
-document.querySelector('.restart').addEventListener('click', newGame);
+document.querySelector('.fa-repeat').addEventListener('click', newGame);
 
 newGame();

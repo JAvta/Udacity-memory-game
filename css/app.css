@@ -87,17 +87,6 @@ h1 {
   cursor: pointer;
 }
 
-.deck .fa-check-circle-o {
-  font-size: 125px;
-  color: #02ccba;
-}
-
-.won {
-  background: #fff;
-  margin: auto;
-  text-align: center;
-}
-
 /*
  * Styles for the Score Panel
  */
@@ -125,5 +114,23 @@ h1 {
 
 .score-panel .restart {
   float: right;
+}
+
+.score-panel .time {
+  margin-right: 3.5em;
+}
+
+.score-panel .fa-repeat {
   cursor: pointer;
+}
+
+.won {
+  background: #fff;
+  margin: auto;
+  text-align: center;
+}
+
+.won .fa-check-circle-o {
+  font-size: 125px;
+  color: #02ccba;
 }
