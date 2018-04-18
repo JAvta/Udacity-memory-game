@@ -65,6 +65,8 @@ let starsCl; // Select "stars" class
 const movesCl = document.querySelector('.moves'); // Select "moves" class
 const timeCl = document.querySelector('.time'); // Select "time" class
 
+const fragment = document.createDocumentFragment();
+
 function clickRespond(evt) {
   const e = evt.target;
 
@@ -131,34 +133,37 @@ function clickRespond(evt) {
   }
 
   function gameWon() {
-    if (tCount < 60) { // Display seconds if less than 1 minute
+    if (tCount < 60) { // Display seconds only if less than a minute
       tCount = `${tCount} seconds`;
 
-    } else if (tCount < 3600) { // Display minutes and seconds if less than 1 hour
-      const ss = s !== 1 ? 's' : ''; // Plural second
-      const ms = m !== 1 ? 's' : ''; // Plural minute
+    } else if (tCount < 3600) { // Display minutes and seconds if less than an hour
+      const mp = m !== 1 ? 's' : ''; // Plural minute
+      const sp = s !== 1 ? 's' : ''; // Plural second
 
-      tCount = `${m} minute${ms} and ${s} second${ss}`;
+      s !== 0 ? tCount = `${m} minute${mp} and ${s} second${sp}` : tCount = `${m} minute${mp}`;
 
-    } else { // Display 'ages!' if more than 1 hour
+    } else { // Display 'ages!' if more than an hour
       tCount = 'ages!'
     }
 
     const congrats =
     `<div class="won">
-      <i class="fa fa-check-circle-o"></i>
       <h1>Congratulations! You Won!</h1>
+      <ul class="stars"></ul>
       <p>Game duration: ${tCount}</p>
       <span class="card match again"> Play again?</span>
     </div>`;
 
     deckCl.classList.add('won');
     deckCl.insertAdjacentHTML('afterbegin', congrats);
+
+    appendStars(document.querySelector('.won .stars'));
+
     document.querySelector('.again').addEventListener('click', newGame);
   }
 
   // clickRespond on unopened cards only
-  if (e.nodeName === 'LI' && e.classList.contains('show') !== true && e.classList.contains('match') !== true) {
+  if (e.classList.contains('show') !== true && e.classList.contains('match') !== true && e.nodeName === 'LI') {
     if (openAr.length < 1) {
       showCard();
 
@@ -176,9 +181,12 @@ function resetStars() {
 
   document.querySelector('.score-panel').insertAdjacentHTML('afterbegin', '<ul class="stars"></ul>');
   starsCl = document.querySelector('.stars');
+  appendStars(starsCl);
+}
 
+function appendStars(target) {
   for (let i = 0; i < sCount; i++) {
-    starsCl.insertAdjacentHTML('afterbegin', '<li><i class="fa fa-star"></i></li>');
+    target.insertAdjacentHTML('afterbegin', '<li><i class="fa fa-star"></i></li>');
   }
 }
 
@@ -192,8 +200,6 @@ function resetDeck() { // Create deck container
 }
 
 function appendCards() { // ** Display the cards on the page
-  const fragment = document.createDocumentFragment();
-
   for (let i = 0; i < totalCards; i++) { // ** - loop through each card and create its HTML
     const newEl = document.createElement('li');
     const innerEl = document.createElement('i');
@@ -213,19 +219,24 @@ function timeStop() {
   clearInterval(time);
 }
 
-function timeStart() {
-  if (tCount === 0) { // Start counting seconds after first two cards opened
+function timeStart(evt) {
+
+  // timeStart on card click only if not started already
+  if (tCount === 0 && evt.target.nodeName === 'LI') {
+    deckCl.removeEventListener('click', timeStart); // Remove the listener, we are already counting!
+    let ss;
+    let mm;
+
     time = setInterval(function () {
-
-      if (tCount > 60) {
-        s = tCount % 60; // Reminder should be seconds
-        m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
-        timeCl.textContent = `${m}:${s}`;
-      } else {
-        timeCl.textContent = `00:${tCount}`;
-      }
-
       tCount++;
+
+      s = tCount % 60; // Reminder should be seconds
+      m = (tCount - s) / 60; // Divide by 60 minus seconds should be minutes
+
+      s < 10 ? ss = '0' + s : ss = s;
+      m < 10 ? mm = '0' + m : mm = m;
+
+      timeCl.textContent = `${mm}:${ss}`;
     }, 1000);
   }
 }
@@ -248,7 +259,7 @@ function newGame() {
   shuffle(cardAr2x); // ** - shuffle the list of cards using the provided "shuffle" method
   appendCards();
 
-  timeStart();
+  deckCl.addEventListener('click', timeStart);
 }
 document.querySelector('.fa-repeat').addEventListener('click', newGame);
 
