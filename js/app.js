@@ -62,10 +62,9 @@ let time; // Time function
 
 let deckCl; // Select "deck" class
 let starsCl; // Select "stars" class
+
 const movesCl = document.querySelector('.moves'); // Select "moves" class
 const timeCl = document.querySelector('.time'); // Select "time" class
-
-const fragment = document.createDocumentFragment();
 
 function clickRespond(evt) {
   const e = evt.target;
@@ -140,7 +139,7 @@ function clickRespond(evt) {
       const mp = m !== 1 ? 's' : ''; // Plural minute
       const sp = s !== 1 ? 's' : ''; // Plural second
 
-      s !== 0 ? tCount = `${m} minute${mp} and ${s} second${sp}` : tCount = `${m} minute${mp}`;
+      s !== 0 ? tCount = `${m} minute${mp} and ${s} second${sp}` : tCount = `${m} minute${mp}`; // Do not display seconds if gameWon at exact minutes
 
     } else { // Display 'ages!' if more than an hour
       tCount = 'ages!'
@@ -180,7 +179,7 @@ function resetStars() {
   }
 
   document.querySelector('.score-panel').insertAdjacentHTML('afterbegin', '<ul class="stars"></ul>');
-  starsCl = document.querySelector('.stars');
+  starsCl = document.querySelector('.stars'); // Reassign class selector on fresh stars container
   appendStars(starsCl);
 }
 
@@ -192,16 +191,16 @@ function appendStars(target) {
 
 function resetDeck() { // Create deck container
   if (deckCl != null) { // Remove deck if there is one already
-    deckCl = deckCl.parentNode;
     deckCl.parentNode.removeChild(deckCl);
   }
 
-  document.querySelector('.container').insertAdjacentHTML('beforeend', '<div class="deck-co"><ul class="deck"></ul></div>');
-  deckCl = document.querySelector('.deck');
-  console.log(deckCl);
+  document.querySelector('.deck-co').insertAdjacentHTML('afterbegin', '<ul class="deck"></ul>');
+  deckCl = document.querySelector('.deck'); // Reassign class selector on fresh deck container
 }
 
 function appendCards() { // ** Display the cards on the page
+  const fragment = document.createDocumentFragment();
+
   for (let i = 0; i < totalCards; i++) { // ** - loop through each card and create its HTML
     const newEl = document.createElement('li');
     const innerEl = document.createElement('i');
@@ -223,7 +222,7 @@ function timeStop() {
 
 function timeStart(evt) {
 
-  // timeStart on card click only if not started already
+  // If not started already, timeStart on card click only
   if (tCount === 0 && evt.target.nodeName === 'LI') {
     deckCl.removeEventListener('click', timeStart); // Remove the listener, we are already counting!
     let ss;

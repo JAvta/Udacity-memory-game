@@ -130,11 +130,6 @@ h1 {
   text-align: center;
 }
 
-.won .fa-check-circle-o {
-  font-size: 125px;
-  color: #02ccba;
-}
-
 .won .stars {
   margin: 0;
   padding: 0;
@@ -148,9 +143,30 @@ h1 {
   color: #02ccba;
 }
 
-/* OPTIMIZE: for smaller screens */
+.version {
+  position: absolute;
+  font-size: 10px;
+}
+
+/*
+ * Styles for smaller screens
+ */
+
+ @media screen and (max-width: 460px) {
+  .deck .card.show, .deck .card.match {
+    font-size: 23px;
+  }
+
+  .deck .won h1 {
+    margin: 0;
+  }
+
+  .won .stars li {
+    font-size: 35px;
+  }
+}
+
 @media screen and (max-width: 660px) {
-  
   .deck-co {
     width: 100%;
     padding-top: 100%;
@@ -173,6 +189,10 @@ h1 {
   .deck .card {
     width: calc((90%)/4);
     height: calc((90%)/4);
+  }
+
+  .deck .won .card.match.again {
+    height: 70px;
   }
 
   .score-panel {
