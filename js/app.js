@@ -192,11 +192,13 @@ function appendStars(target) {
 
 function resetDeck() { // Create deck container
   if (deckCl != null) { // Remove deck if there is one already
+    deckCl = deckCl.parentNode;
     deckCl.parentNode.removeChild(deckCl);
   }
 
-  document.querySelector('.container').insertAdjacentHTML('beforeend', '<ul class="deck"></ul>');
+  document.querySelector('.container').insertAdjacentHTML('beforeend', '<div class="deck-co"><ul class="deck"></ul></div>');
   deckCl = document.querySelector('.deck');
+  console.log(deckCl);
 }
 
 function appendCards() { // ** Display the cards on the page

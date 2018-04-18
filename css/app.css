@@ -150,26 +150,33 @@ h1 {
 
 /* OPTIMIZE: for smaller screens */
 @media screen and (max-width: 660px) {
-  .container {
+  
+  .deck-co {
     width: 100%;
+    padding-top: 100%;
     position: relative;
-
   }
 
   .deck {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    min-height: auto;
     width: 100%;
-    padding-top: 100%;
-    display: block;
-
     box-shadow: 0 15px 20px 0 rgba(46, 61, 73, 0.5);
-    /* position: relative; */
+    padding: 1em;
+    margin: auto;
   }
 
   .deck .card {
-    width: 20px;
-    height: 20px;
-    /* width: calc((100% - 9em)/4); */
-    /* padding-top: 100%; */
+    width: calc((90%)/4);
+    height: calc((90%)/4);
+  }
 
+  .score-panel {
+    width: 100%;
+    padding: 0em 1em;
   }
 }
