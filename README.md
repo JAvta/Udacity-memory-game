@@ -1,4 +1,5 @@
 # Memory Game Project
+[v1.0 by Jurijs Avtaikins](https://javta.github.io/fend-project-memory-game/)
 
 ## Table of Contents
 
