@@ -1,5 +1,7 @@
 # Memory Game Project
-[v1.0 by Jurijs Avtaikins](https://javta.github.io/fend-project-memory-game/)
+[v1.0 by Jurijs Avtaikins](https://javta.github.io/Udacity-memory-game/)
+
+*(follow the above link to view the project)*
 
 ## Table of Contents
 
